@@ -1,68 +1,71 @@
-let ID;
 let url = "http://localhost:3000/users";
 const myForm = document.getElementById("my-form");
-const UserName = document.getElementById("name");
 const PassWord = document.getElementById("password");
 const Email = document.getElementById("email");
+
 myForm.addEventListener("submit", onSubmit);
+
 async function onSubmit(e) {
 try{
    e.preventDefault();
-    const name = UserName.value;
     const password = PassWord.value;
     const email = Email.value;
-    UserName.value = "";
     PassWord.value = "";
     Email.value = "";
 
     let myObj = {
-      name:name,
       email:email,
-      password:password
+      password:password,
     };
 
-    let res = await axios.post(`${url}/signup`, myObj)
-    console.log(res);
-     if(res.status === 201){
+    let res = await axios.post(`${url}/signin`, myObj)
+      console.log(res);
+      if(res.status === 201){
         alert(res.data.message);
-        window.location.href = "./Login/login.html"
-    }
-    else{
-         throw new Error('Failed to Sign up');
-    }
+        localStorage.setItem('token', res.data.token);   
+        window.location.href = "../Candies/index.html";
+      }
+      else{
+        throw new Error;
+      }    
 }
 catch(err){
-    console.log(err.response);
+  console.log(err.response);
   
   if(err.response.status === 400 && t == 0){
     t++;
-    //console.log(err.response.data.err);
+    console.log(err.response.data.err);
+    const fillprop = document.getElementById("fillnot");
+    const ele = document.createElement('li');
+      // document.body.innerHTML += `<br><div style = 'color:red;'>${err.response.data.err}</div>`;
+      ele.innerHTML+=`<br><div style = 'color:red;'>${err.response.data.err}</div>`;
+      fillprop.appendChild(ele);
+  }
+  else if(err.response.status === 401 && t == 0){
+    t++;
+    console.log(err.response.data.message);
     const fillprop = document.getElementById("fillnot");
     const ele = document.createElement('li');
       // document.body.innerHTML += `<br><div style = 'color:red;'>${err.response.data.err}</div>`;
       ele.innerHTML+=`<br><div style = 'color:red;'>${err.response.data.message}</div>`;
       fillprop.appendChild(ele);
   }
+
   else if(err.response.status === 404 && t == 0){
     t++;
-    //console.log(err.response);
+    console.log(err.response.data.message);
     const fillprop = document.getElementById("fillnot");
     const ele = document.createElement('li');
       // document.body.innerHTML += `<br><div style = 'color:red;'>${err.response.data.err}</div>`;
       ele.innerHTML+=`<br><div style = 'color:red;'>${err.response.data.message}</div>`;
       fillprop.appendChild(ele);
   }
-    
-  else if(err.response.status === 500 && t == 0){
-    const fillprop = document.getElementById("fillnot");
-    const ele = document.createElement('li');
-      // document.body.innerHTML += `<br><div style = 'color:red;'>${err.response.data.err}</div>`;
-      ele.innerHTML+=`<br><div style = 'color:red;'>${err.response.data.message}</div>`;
-      fillprop.appendChild(ele);
-    document.body.innerHTML += `<div style = 'color:red;'>${err}</div>`;
-  }
-    
-    }
+  
+ }
 }
 
 let t= 0;
+
+// function forgotpassword() {
+//   window.location.href = "./ForgotPassword/index.html"
+// }

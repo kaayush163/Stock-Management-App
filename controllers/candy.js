@@ -1,10 +1,9 @@
 const Candy = require('../models/candy');
 
-const express = require('express');
 
 exports.getCandy = async(req,res) => {
     try{
-        const all = await Candy.findAll();
+        const all = await Candy.findAll({where:{userId:req.user.id}});
 
         res.status(201).json(all);
     }
@@ -25,6 +24,7 @@ exports.postCandy = async(req,res, next) => {
             productCode:productCode,
             qty:qty,
             perPrice:perPrice,
+            userId:req.user.id
         });
 
         res.status(201).json(data);
@@ -41,7 +41,7 @@ exports.deleteCandy = async(req,res) => {
         const candyField = await Candy.findByPk(candId);
         console.log(candyField);
 
-        await candyField.destroy();
+        await candyField.destroy({where:{userId:req.user.id}});
 
         res.status(201).json({delete: candyField});
         
